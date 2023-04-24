@@ -1,0 +1,61 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class judejimas : MonoBehaviour
+{
+    public float runspeed;
+    public GameObject pauseMenuScreen;
+    private float jump;
+    private float horizontal;
+    private float vertical;
+    private Rigidbody2D rb;
+    private bool IsGrounded;
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody2D>();
+    }
+
+    void Update()
+    {
+        horizontal = Input.GetAxisRaw("Horizontal");
+        vertical = Input.GetAxisRaw("Vertical");
+        rb.velocity = new Vector2(horizontal * runspeed, vertical * runspeed);
+
+        if (Input.GetButtonDown("Jump") && !IsGrounded)
+        {
+            rb.AddForce(new Vector2(rb.velocity.x, jump));
+            IsGrounded = true;
+        }
+     }
+
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Ground"))
+        {
+            IsGrounded = false;
+        }
+    }
+
+    public void Pause ()
+    {
+        Time.timeScale = 0;
+        pauseMenuScreen.SetActive(true);
+    }
+
+    public void Resume ()
+    {
+        Time.timeScale = 1;
+        pauseMenuScreen.SetActive(false);
+    }
+
+    public void BackToMenu ()
+    {
+        SceneManager.LoadScene(0);
+    }
+
+}
+
